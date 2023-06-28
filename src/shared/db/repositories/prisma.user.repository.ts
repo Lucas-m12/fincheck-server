@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { User } from 'modules/user/entities/user.entity';
 import { UserRepository } from 'modules/user/repositories/UserRepository';
 import { PrismaService } from 'shared/db/prisma.service';
+import { PrismaUserMapper } from './mappers/user.mapper';
 
 @Injectable()
 export class PrismaUserRepository implements UserRepository {
@@ -37,6 +38,22 @@ export class PrismaUserRepository implements UserRepository {
         },
       },
     });
+  }
+
+  async findById(id: string): Promise<User> {
+    const user = await this.prismaService.user.findUnique({
+      where: { id },
+    });
+    const output = PrismaUserMapper.toApp(user);
+    return output;
+  }
+
+  async findByEmail(email: string): Promise<User> {
+    const user = await this.prismaService.user.findUnique({
+      where: { email },
+    });
+    const output = PrismaUserMapper.toApp(user);
+    return output;
   }
 
   async userExist(email: string): Promise<boolean> {

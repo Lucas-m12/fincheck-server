@@ -1,4 +1,4 @@
-import { hashSync } from 'bcryptjs';
+import { compareSync, hashSync } from 'bcryptjs';
 import { randomUUID } from 'crypto';
 
 interface Props {
@@ -24,6 +24,10 @@ export class User {
     this.cpf = props.cpf;
     this.password = props.password;
     this.passwordHash = this.generatePasswordHash();
+  }
+
+  public isValidPassword(password: string) {
+    return compareSync(password, this.password);
   }
 
   private generatePasswordHash() {
